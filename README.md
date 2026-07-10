@@ -13,10 +13,11 @@ The repository supports individual experiments and the complete 26-configuration
 ```text
 attention_analysis_extractor/
 ├── README.md
-├── notebooks/
-│   ├── openie_pt_experiment_final.ipynb
+├── data/
 │   ├── bia_gold_sentences.jsonl
 │   └── pt_bosque-ud-train.conllu
+├── notebooks/
+│   └── openie_pt_experiment_final.ipynb
 └── src/
     ├── __init__.py
     ├── extractor.py
@@ -27,12 +28,11 @@ attention_analysis_extractor/
     └── run_all_ablations.py
 ```
 
-`run_all_ablations.py` also detects the two input files under `data/` if the repository is later reorganized to keep corpora outside `notebooks/`.
 
 ## Data
 
-- `bia_gold_sentences.jsonl`: BIA evaluation corpus, containing 262 Brazilian Portuguese sentences and 427 reference triples.
-- `pt_bosque-ud-train.conllu`: Portuguese UD Bosque file used to rank attention heads for subject and object evidence.
+- `data/bia_gold_sentences.jsonl`: BIA evaluation corpus, containing 262 Brazilian Portuguese sentences and 427 reference triples.
+- `data/pt_bosque-ud-train.conllu`: Portuguese UD Bosque file used to rank attention heads for subject and object evidence.
 
 The BIA file is used for evaluation. The Bosque file is used for attention-head selection and is not an additional OpenIE test set.
 
@@ -87,8 +87,8 @@ From the repository root:
 
 ```bash
 python -m src.run_experiment \
-  --gold notebooks/bia_gold_sentences.jsonl \
-  --bosque notebooks/pt_bosque-ud-train.conllu \
+  --gold data/bia_gold_sentences.jsonl \
+  --bosque data/pt_bosque-ud-train.conllu \
   --output-dir outputs/rq3_attn_on_thr0 \
   --dataset-name bia \
   --heads-mode rank \
@@ -105,16 +105,15 @@ Place `run_all_ablations.py` under `src/`, then execute:
 
 ```bash
 python -m src.run_all_ablations \
-  --gold notebooks/bia_gold_sentences.jsonl \
-  --bosque notebooks/pt_bosque-ud-train.conllu \
+  --gold data/bia_gold_sentences.jsonl \
+  --bosque data/pt_bosque-ud-train.conllu \
   --output-dir outputs/ablation_experiments
 ```
 
-When `--gold` and `--bosque` are omitted, the script searches for the files in this order:
+When `--gold` and `--bosque` are omitted, the script uses the canonical files under `data/`:
 
-1. `data/`;
-2. `notebooks/`; and
-3. the repository root.
+- `data/bia_gold_sentences.jsonl`;
+- `data/pt_bosque-ud-train.conllu`.
 
 List the 26 configurations without executing them:
 
@@ -203,7 +202,7 @@ The paper reports the strongest configuration as UD extraction with attention en
 
 ## Notebook
 
-`notebooks/openie_pt_experiment_final.ipynb` contains the original interactive analysis, including derived tables, error analysis, protocol comparisons, and attention diagnostics. The command-line ablation script reproduces the systematic RQ1–RQ8 execution and consolidation; the notebook remains the reference for exploratory and post-hoc analyses.
+`notebooks/openie_pt_experiment_final.ipynb` contains the original interactive analysis, including derived tables, error analysis, protocol comparisons, and attention diagnostics. The command-line ablation script reproduces the systematic RQ1–RQ8 execution and consolidation, while the datasets are kept separately under `data/`.
 
 ## Citation
 
