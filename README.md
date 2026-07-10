@@ -43,7 +43,7 @@ The experiments reported in the paper used:
 - Ubuntu 24.04 LTS;
 - Python 3.12;
 - Stanza 1.10.1;
-- Transformers 4.46.3;
+- Transformers 4.48.0;
 - PyTorch 2.5.1;
 - pandas 2.2.3;
 - conllu 6.0.0; and
