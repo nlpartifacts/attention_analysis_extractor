@@ -1,4 +1,4 @@
-# Multi2OIE — official artifacts used (no code changes)
+# Multi2OIE: official artifacts used (no code changes)
 
 - System: Multi2OIE (Ro, Lee & Kang, EMNLP 2020)
 - Official repository: youngbin-ro/Multi2OIE, commit `4a73a3c37412` (shallow clone in `.external/Multi2OIE`)
@@ -19,6 +19,7 @@
   (`BertModel(...)[0]`) is stable across these versions. The stack difference
   is recorded in the manifest.
 - Mapping to the benchmark's binary schema: the official output is n-ary
-  `[pred, arg0, arg1, ...]`; arg1 = arg0, rel = pred, arg2 = concatenation of
-  the remaining arguments. The full raw line is preserved in `raw_output`.
+  `[pred, arg0, arg1, ...]`; arg1 = arg0, rel = pred, and arg2 is the
+  concatenation of the remaining arguments. The full raw line is preserved in
+  `raw_output`.
 - License: MIT (repository LICENSE file).

@@ -1,6 +1,6 @@
-# Comparative benchmark — summary
+# Comparative benchmark: summary
 
-Corpus: BIA — 262 sentences, 427 gold triples (sha256 `ddd882e93b3d...`).
+Corpus: BIA, 262 sentences, 427 gold triples (sha256 `ddd882e93b3d...`).
 Gemma 4: `gemma4:latest` digest `c6eb396dbd5992bbe3f5cdb947e8bbc0ee413d7c17e2beaae69f5d569cf982eb`, quantization Q4_K_M, Ollama 0.20.0.
 
 ## Metrics (all protocols)
@@ -57,7 +57,7 @@ Gemma 4: `gemma4:latest` digest `c6eb396dbd5992bbe3f5cdb947e8bbc0ee413d7c17e2bea
 | multi2oie | ollama_gemma4 | bia_legacy | -8.90 | -8.92 | [-13.04, -4.81] | 0.0000 |
 | multi2oie | ollama_gemma4 | carb_style | 1.38 | 1.35 | [-2.18, 4.85] | 0.7726 |
 
-## Unavailable systems (no metrics — unavailability is not zero)
+## Unavailable systems (no metrics, since unavailability is not zero)
 
 - **portnoie**: official code exists (FORMAS/dptoie-neural) with a trained model, but its official environment (Python$<$3.10, allennlp 2.7.0, unpinned git dependencies) is not deterministically reconstructible; building an approximate substitute is not allowed
 

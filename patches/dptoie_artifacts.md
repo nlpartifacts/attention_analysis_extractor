@@ -1,9 +1,9 @@
-# DptOIE — official artifacts used (no code changes)
+# DptOIE: official artifacts used (no code changes)
 
 - System: DptOIE (Oliveira, Claro & Souza, 2023)
 - Official repository: FORMAS/DptOIE, commit `1a5ef708b1ed` (shallow clone in `.external/DptOIE`)
 - Reason for this record: the repository ships `DptOIE.jar` and
-  `pt-models/pt-pos-tagger.model`, but the dependency-parser model
+  `pt-models/pt-pos-tagger.model`, but the dependency parser model
   (`pt-dep-parser.gz`) is distributed by the authors in the "Models" folder
   (Google Drive) linked from the official README.
 - Modification: **no line of DptOIE code was changed.** The following files
@@ -13,9 +13,10 @@
   - the git repository's jar, kept for reference (sha256 `5ff8246cc170537ce7ccb7e1640872564b1534f2ab6c0dbb00ea264468b36d52`)
 - Execution: `java -jar DptOIE-drive.jar -sentencesIN <file> -SC true -CC true -appositive 1`,
   in batch mode (one invocation for the 262 sentences, in corpus order),
-  since dependency-parser loading dominates per-process cost. A bisection
-  fallback isolates sentences that crash the Java process (1/262 in this run).
+  since dependency parser loading dominates the cost of each process. A
+  bisection fallback isolates sentences that crash the Java process (1 of 262
+  in this run).
 - Expected effect: extractions produced by the official algorithm, with no
   modification of its linguistic rules.
-- License: repository has no explicit LICENSE file; usage restricted to
-  academic comparative evaluation, with citation to the authors.
+- License: the repository has no explicit LICENSE file, so usage is restricted
+  to academic comparative evaluation, with citation to the authors.
