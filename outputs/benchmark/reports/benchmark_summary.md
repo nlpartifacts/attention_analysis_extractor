@@ -1,11 +1,11 @@
-# Benchmark comparativo — resumo
+# Comparative benchmark — summary
 
-Corpus: BIA — 262 sentenças, 427 triplas gold (sha256 `ddd882e93b3d...`).
-Gemma 4: `gemma4:latest` digest `c6eb396dbd5992bbe3f5cdb947e8bbc0ee413d7c17e2beaae69f5d569cf982eb`, quantização Q4_K_M, Ollama 0.20.0.
+Corpus: BIA — 262 sentences, 427 gold triples (sha256 `ddd882e93b3d...`).
+Gemma 4: `gemma4:latest` digest `c6eb396dbd5992bbe3f5cdb947e8bbc0ee413d7c17e2beaae69f5d569cf982eb`, quantization Q4_K_M, Ollama 0.20.0.
 
-## Métricas (todos os protocolos)
+## Metrics (all protocols)
 
-| Sistema | Protocolo | TP | FP | FN | P | R | F1 | IC95 F1 |
+| System | Protocol | TP | FP | FN | P | R | F1 | 95% CI (F1) |
 |---|---|---|---|---|---|---|---|---|
 | dptoie | strict | 53 | 2022 | 374 | 2.55 | 12.41 | 4.24 | [3.08, 5.49] |
 | dptoie | tolerant | 92 | 1983 | 335 | 4.43 | 21.55 | 7.35 | [5.84, 9.00] |
@@ -28,9 +28,9 @@ Gemma 4: `gemma4:latest` digest `c6eb396dbd5992bbe3f5cdb947e8bbc0ee413d7c17e2bea
 | ud_baseline | bia_legacy | 272 | 333 | 155 | 44.96 | 63.70 | 52.71 | [49.03, 56.34] |
 | ud_baseline | carb_style | 298 | 282 | 129 | 51.38 | 69.79 | 59.19 | [55.99, 62.31] |
 
-## Diferenças pareadas de F1 (bootstrap por sentença)
+## Paired F1 differences (sentence-level bootstrap)
 
-| A | B | Protocolo | ΔF1 (pontual) | ΔF1 médio | IC95 | P(Δ>0) |
+| A | B | Protocol | ΔF1 (point) | mean ΔF1 | 95% CI | P(Δ>0) |
 |---|---|---|---|---|---|---|
 | pt_oie | ud_baseline | strict | 0.90 | 0.89 | [0.37, 1.33] | 0.9987 |
 | pt_oie | ud_baseline | tolerant | -1.64 | -1.65 | [-3.25, -0.26] | 0.0078 |
@@ -57,13 +57,13 @@ Gemma 4: `gemma4:latest` digest `c6eb396dbd5992bbe3f5cdb947e8bbc0ee413d7c17e2bea
 | multi2oie | ollama_gemma4 | bia_legacy | -8.90 | -8.92 | [-13.04, -4.81] | 0.0000 |
 | multi2oie | ollama_gemma4 | carb_style | 1.38 | 1.35 | [-2.18, 4.85] | 0.7726 |
 
-## Sistemas indisponíveis (sem métricas — indisponibilidade não é zero)
+## Unavailable systems (no metrics — unavailability is not zero)
 
 - **portnoie**: official code exists (FORMAS/dptoie-neural) with a trained model, but its official environment (Python$<$3.10, allennlp 2.7.0, unpinned git dependencies) is not deterministically reconstructible; building an approximate substitute is not allowed
 
-## Execução
+## Runtime
 
-| Sistema | Sentenças | Erros | Triplas | Mediana s/sent | p95 s/sent |
+| System | Sentences | Errors | Triples | Median s/sent | p95 s/sent |
 |---|---|---|---|---|---|
 | dptoie | 262 | 1 | 2381 | 0.254 | 0.254 |
 | multi2oie | 262 | 0 | 672 | 0.103 | 0.103 |

@@ -1,57 +1,57 @@
-# Limitações do benchmark comparativo
+# Limitations of the comparative benchmark
 
-1. **Corpus pequeno.** 262 sentenças / 427 triplas gold. Os ICs bootstrap
-   quantificam a incerteza, mas diferenças pequenas entre sistemas permanecem
-   estatisticamente indistinguíveis; conclusões sobre elas devem ser moderadas.
+1. **Small corpus.** 262 sentences / 427 gold triples. Bootstrap confidence
+   intervals quantify uncertainty, but small differences between systems
+   remain statistically indistinguishable; conclusions about them must be
+   moderated.
 
-2. **Concordância entre anotadores.** O BIA foi anotado por proposta e consenso
-   mútuo (Queiroz et al., 2023); não há anotação paralela independente e o
-   Kappa não pode ser reconstruído retrospectivamente. Limitação herdada por
-   todas as comparações deste benchmark.
+2. **Inter-annotator agreement.** BIA was annotated by proposal and mutual
+   consensus (Queiroz et al., 2023); there is no independent parallel
+   annotation and Kappa cannot be reconstructed retrospectively. This
+   limitation is inherited by every comparison in this benchmark.
 
-3. **Protocolos de matching não são intercambiáveis.** O `bia_legacy` é o
-   avaliador histórico do projeto e seus números não são comparáveis
-   externamente. Os quatro protocolos são reportados lado a lado justamente
-   porque o F1 do mesmo conjunto de predições varia dezenas de pontos entre
-   protocolos.
+3. **Matching protocols are not interchangeable.** `bia_legacy` is the
+   project's historical scorer and its numbers are not externally comparable.
+   The four protocols are reported side by side precisely because F1 on
+   identical predictions varies by tens of points across protocols.
 
-4. **Deduplicação.** Os protocolos padronizados deduplicam predições exatas
-   (minúsculas/espaços) de forma idêntica para todos os sistemas; o
-   `bia_legacy` não deduplica (fidelidade histórica). Sistemas que emitem
-   variantes quase duplicadas (ex.: DptOIE, com variantes de spans) são
-   afetados de modo diferente por protocolos com e sem dedup.
+4. **Deduplication.** The standardized protocols deduplicate exact duplicates
+   (lowercase/whitespace) identically for all systems; `bia_legacy` does not
+   (historical fidelity). Systems that emit near-duplicate variants (e.g.,
+   DptOIE span variants) are affected differently by protocols with and
+   without deduplication.
 
-5. **PortNOIE indisponível.** Código oficial existe (FORMAS/dptoie-neural,
-   commit 770f29fe) com modelo treinado, mas o ambiente oficial
-   (Python <3.10, allennlp==2.7.0, sru@3.0.0-dev e flair@master não pinados)
-   não é reconstituível deterministicamente. Não foi construído substituto.
-   A comparação com PortNOIE permanece em aberto.
+5. **PortNOIE unavailable.** Official code exists (FORMAS/dptoie-neural,
+   commit 770f29fe) with a trained model, but the official environment
+   (Python <3.10, allennlp==2.7.0, unpinned git dependencies sru@3.0.0-dev
+   and flair@master) is not deterministically reconstructible. No substitute
+   was built. The comparison with PortNOIE remains open.
 
-6. **Multi²OIE em stack moderno.** O checkpoint oficial (torch 1.4) foi
-   carregado com torch 2.5.1/transformers 4.48.2 (0 chaves faltantes/
-   inesperadas). Diferenças numéricas de kernels entre versões de torch podem,
-   em princípio, alterar marginalmente as saídas em relação ao ambiente
-   original dos autores.
+6. **Multi2OIE on a modern stack.** The official checkpoint (torch 1.4) was
+   loaded with torch 2.5.1/transformers 4.48.2 (0 missing/unexpected keys).
+   Kernel-level numerical differences between torch versions could, in
+   principle, marginally alter outputs relative to the authors' original
+   environment.
 
-7. **Multi²OIE é zero-shot n-ário.** O modelo foi treinado em inglês
-   (OpenIE4) e produz tuplas n-árias; o mapeamento para o esquema binário
-   (arg2 = concatenação dos argumentos restantes) é documentado, mas penaliza
-   o sistema em protocolos estritos de fronteira.
+7. **Multi2OIE is zero-shot and n-ary.** The model was trained on English
+   (OpenIE4) and produces n-ary tuples; the mapping to the binary schema
+   (arg2 = concatenation of remaining arguments) is documented but penalizes
+   the system under strict boundary protocols.
 
-8. **Gemma 4 quantizado.** `gemma4:latest` no Ollama é Q4_K_M (8,0B). Resultados
-   podem diferir dos pesos plenos. O digest exato está no manifesto. Decodificação
-   com temperatura 0/seed fixa é determinística apenas na medida em que o
-   runtime do Ollama o suporta.
+8. **Quantized Gemma 4.** `gemma4:latest` on Ollama is Q4_K_M (8.0B). Results
+   may differ from full-precision weights. The exact digest is in the
+   manifest. Temperature-0/fixed-seed decoding is deterministic only to the
+   extent the Ollama runtime supports it.
 
-9. **Uma única execução por sistema.** Sistemas determinísticos (UD, DptOIE)
-   não variam; para o Gemma 4 não foram feitas execuções repetidas para
-   estimar variância residual de runtime.
+9. **Single run per system.** Deterministic systems (UD, DptOIE) do not vary;
+   no repeated runs were performed for Gemma 4 to estimate residual runtime
+   variance.
 
-10. **Parser único.** PT-OIE-EXTRACTOR e UD baseline dependem do Stanza; a
-    sensibilidade a parser não foi avaliada (limitação também registrada no
-    artigo).
+10. **Single parser.** PT-OIE-EXTRACTOR and the UD baseline depend on Stanza;
+    parser sensitivity was not evaluated (a limitation also recorded in the
+    paper).
 
-11. **Falhas contabilizadas, não imputadas.** Sentenças com erro contam como
-    zero predição (FNs integrais) nas métricas agregadas do sistema que falhou,
-    com a taxa de falha reportada separadamente — não houve exclusão de
-    sentenças nem imputação.
+11. **Failures counted, not imputed.** Sentences with errors count as zero
+    predictions (full FNs) in the failing system's aggregate metrics, with
+    the failure rate reported separately — no sentence exclusion, no
+    imputation.

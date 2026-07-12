@@ -1,59 +1,58 @@
-# Benchmark comparativo de OpenIE para português brasileiro (corpus BIA)
+# Comparative OpenIE benchmark for Brazilian Portuguese (BIA corpus)
 
-Benchmark cientificamente controlado que compara sistemas de Open Information
-Extraction sobre **exatamente as mesmas 262 sentenças e 427 triplas gold** do
-corpus BIA (`data/bia_gold_sentences.jsonl`, SHA-256 registrado no manifesto).
-Motivado pelos pareceres da submissão EMNLP 2026 do PT-OIE-EXTRACTOR
-(ver `outputs/benchmark/reviewer_requirements.md`).
+A scientifically controlled benchmark comparing Open Information Extraction
+systems on **exactly the same 262 sentences and 427 gold triples** of the BIA
+corpus (`data/bia_gold_sentences.jsonl`; SHA-256 recorded in the manifest).
 
-## Sistemas
+## Systems
 
-| Sistema | Origem | Execução |
+| System | Source | Execution |
 |---|---|---|
-| `pt_oie` | Este repositório — melhor configuração do artigo (`rq3_attn_on_thr0`: UD + atenção, heads rank top-10, τ=0.0, validação off, seed 13) | local, GPU |
-| `ud_baseline` | Este repositório — RQ1 (UD puro, sem atenção, sem validação) | local |
-| `dptoie` | Oficial: FORMAS/DptOIE + modelos do Drive dos autores (ver `patches/dptoie_artifacts.md`) | Java, lote |
-| `multi2oie` | Oficial: youngbin-ro/Multi2OIE + checkpoint multilíngue oficial, zero-shot (ver `patches/multi2oie_artifacts.md`) | CPU, lote |
-| `portnoie` | **Indisponível** — código oficial existe (FORMAS/dptoie-neural) mas o ambiente de execução não é reconstituível; sem substituto (ver `outputs/benchmark/system_availability.json`) | — |
-| `ollama_gemma4` | `gemma4:latest` via API nativa do Ollama, zero-shot, prompt fixo (`configs/gemma4_prompt_pt.txt`), temperatura 0, seed 42, digest verificado | local, GPU |
+| `pt_oie` | This repository — the paper's best configuration (`rq3_attn_on_thr0`: UD + attention, ranked heads top-10, tau=0.0, validation off, seed 13) | local, GPU |
+| `ud_baseline` | This repository — RQ1 (pure UD, no attention, no validation) | local |
+| `dptoie` | Official: FORMAS/DptOIE + the authors' officially distributed models (see `patches/dptoie_artifacts.md`) | Java, batch |
+| `multi2oie` | Official: youngbin-ro/Multi2OIE + official multilingual checkpoint, zero-shot (see `patches/multi2oie_artifacts.md`) | CPU, batch |
+| `portnoie` | **Unavailable** — official code exists (FORMAS/dptoie-neural) but its execution environment is not reconstructible; no substitute was built (see `outputs/benchmark/system_availability.json`) | — |
+| `ollama_gemma4` | `gemma4:latest` via the native Ollama API, zero-shot, fixed prompt (`configs/gemma4_prompt_pt.txt`), temperature 0, seed 42, verified model digest | local, GPU |
 
-Sistemas indisponíveis **não** recebem métricas (indisponibilidade não é zero).
+Unavailable systems receive **no** scores (unavailability is not zero).
 
-## Reprodução
+## Reproduction
 
 ```bash
-# 0. Ambiente: Python 3.12 (ver requirements.txt) + pytest
-#    Ollama em http://localhost:11434 com gemma4:latest
-#    Java 8+ para o DptOIE
+# 0. Environment: Python 3.12 (see requirements.txt) + pytest
+#    Ollama at http://localhost:11434 with gemma4:latest
+#    Java 8+ for DptOIE
 
-# 1. Validar corpus (262 sentenças / 427 triplas / SHA-256)
+# 1. Validate the corpus (262 sentences / 427 triples / SHA-256)
 python -m scripts.validate_corpus
 
-# 2. Obter sistemas externos oficiais (rede; idempotente)
+# 2. Fetch the official external systems (network; idempotent)
 python -m scripts.fetch_external_systems
-# DptOIE: copiar pt-dep-parser.gz e DptOIE.jar da pasta "Models" (Drive oficial)
-#   para .external/DptOIE/ — ver patches/dptoie_artifacts.md (hashes)
-# Multi2OIE: baixar o checkpoint multilíngue oficial para
-#   .external/Multi2OIE/multilingual_model.bin — ver patches/multi2oie_artifacts.md
+# DptOIE: copy pt-dep-parser.gz and DptOIE.jar from the official "Models"
+#   folder (authors' Drive) into .external/DptOIE/ — see
+#   patches/dptoie_artifacts.md (hashes)
+# Multi2OIE: download the official multilingual checkpoint to
+#   .external/Multi2OIE/multilingual_model.bin — see patches/multi2oie_artifacts.md
 
-# 3. Registrar o digest do gemma4:latest (obrigatório antes da execução)
+# 3. Record the gemma4:latest digest (required before the full run)
 python -m scripts.inspect_ollama --model gemma4:latest \
   --output outputs/benchmark/models/gemma4_latest_manifest.json
 
-# 4. Testes unitários
+# 4. Unit tests
 python -m pytest tests/ -q
 
-# 5. Smoke test (formato e erros técnicos; 5 sentenças)
+# 5. Smoke test (format and technical errors only; 5 sentences)
 python -m scripts.smoke_test_benchmark --systems pt_oie ud_baseline ollama_gemma4 --limit 5
 
-# 6. Benchmark completo (a extração grava raw/, normalized/, errors/)
+# 6. Full benchmark (extraction writes raw/, normalized/, errors/)
 python -m scripts.run_benchmark \
   --config configs/benchmark.yaml \
   --systems pt_oie ud_baseline dptoie multi2oie portnoie ollama_gemma4 \
   --output-dir outputs/benchmark \
   --seed 42
 
-# 7. Avaliação (reexecutável a partir das predições salvas, sem nova extração)
+# 7. Evaluation (re-runnable from the saved predictions, no re-extraction)
 python -m scripts.evaluate_benchmark \
   --predictions-dir outputs/benchmark/normalized \
   --gold data/bia_gold_sentences.jsonl \
@@ -61,80 +60,83 @@ python -m scripts.evaluate_benchmark \
   --bootstrap-samples 10000 \
   --seed 42
 
-# 8. Relatórios (resumo, tabela LaTeX)
+# 8. Reports (summary, LaTeX table)
 python -m scripts.generate_reviewer_report
 ```
 
-Opções úteis de `run_benchmark`: `--systems`, `--limit`, `--resume`, `--force`,
+Useful `run_benchmark` options: `--systems`, `--limit`, `--resume`, `--force`,
 `--fail-fast`, `--timeout`, `--dry-run`.
 
-## Protocolos de avaliação
+## Evaluation protocols
 
-Todos os sistemas são avaliados pelos mesmos quatro protocolos; apenas triplas
-gold com `valid=true` contam. Nos protocolos padronizados (strict, tolerant,
-carb_style), deduplicação exata (minúsculas + colapso de espaços) é aplicada
-às predições de todos os sistemas antes do matching. O `bia_legacy` **não**
-aplica deduplicação, para preservar exatamente o comportamento histórico do
-avaliador do artigo — verificado por reprodução bit-exata dos números
-publicados (RQ3: TP=265, FP=273, FN=162, F1=54,92; RQ1: F1=52,71).
+All systems are evaluated under the same four protocols; only gold triples
+with `valid=true` count. Under the standardized protocols (strict, tolerant,
+carb_style), exact deduplication (lowercase + whitespace collapse) is applied
+to every system's predictions before matching. `bia_legacy` applies **no**
+deduplication, preserving the exact historical behavior of the paper's
+evaluator — verified by bit-exact reproduction of the published counts
+(RQ3: TP=265, FP=273, FN=162, F1=54.92; RQ1: F1=52.71).
 
-1. **strict** — igualdade exata dos três slots após minúsculas e colapso de
-   espaços; atribuição um-para-um determinística.
-2. **tolerant** — F1 de tokens por slot (tokenização: minúsculas, pontuação
-   removida, acentos preservados); par elegível quando o **menor** F1 de slot
-   ≥ 0.70; atribuição um-para-um pelo F1 médio dos slots.
-3. **carb_style** — score ponderado 0.35·F1(arg1) + 0.30·F1(rel) + 0.35·F1(arg2)
-   ≥ 0.60; atribuição um-para-um pelo score.
-4. **bia_legacy** — o avaliador legado do projeto (antes chamado *Official* no
-   artigo), preservado **sem alteração** via `src.extractor.evaluate_dataset_legacy`.
-   Normalização: minúsculas, expansão de contrações, remoção de pontuação,
-   remoção de determinantes iniciais dos argumentos. Matching de argumentos:
-   igualdade, sufixo, prefixo (≥1 token) ou subconjunto de palavras; relação:
-   igualdade ou prefixo parcial (com salto de verbo leve inicial do gold).
-   Varredura gulosa na ordem do gold, um-para-um por construção. Números
-   obtidos sob este protocolo não são comparáveis externamente.
+1. **strict** — exact equality of all three slots after lowercasing and
+   whitespace collapse; deterministic one-to-one assignment.
+2. **tolerant** — per-slot token F1 (tokenization: lowercase, punctuation
+   removed, accents preserved); a pair is eligible when the **minimum** slot
+   F1 is >= 0.70; one-to-one assignment by mean slot F1.
+3. **carb_style** — weighted score 0.35*F1(arg1) + 0.30*F1(rel) + 0.35*F1(arg2)
+   >= 0.60; one-to-one assignment by score.
+4. **bia_legacy** — the project's legacy scorer (called *Official* in the
+   submitted paper), preserved **unchanged** via
+   `src.extractor.evaluate_dataset_legacy`. Normalization: lowercasing,
+   contraction expansion, punctuation removal, removal of leading determiners
+   from arguments. Argument matching: equality, suffix, prefix (>=1 token), or
+   word-subset; relation matching: equality or partial prefix (skipping a
+   leading light verb in the gold). Greedy scan in gold order, one-to-one by
+   construction. Scores obtained under this protocol are not externally
+   comparable.
 
-Nos protocolos padronizados (1–3) a atribuição ordena os pares por
-(-score, índice gold, índice predição) — determinística, empates estáveis.
+Under the standardized protocols (1-3), assignment sorts candidate pairs by
+(-score, gold index, prediction index) — deterministic, stable ties.
 
-## Estatística
+## Statistics
 
-- Bootstrap **pareado por sentença** (unidade de reamostragem = sentença),
-  10.000 reamostragens, seed 42, IC percentil 95%.
-- As diferenças de F1 entre sistemas usam as **mesmas** reamostragens
-  (pareamento), com ΔF1 médio, mediana, IC 95% e P(Δ>0).
-- Nenhuma alegação de significância é feita apenas com o valor pontual.
+- **Sentence-level paired bootstrap** (resampling unit = sentence),
+  10,000 resamples, seed 42, 95% percentile intervals.
+- F1 differences between systems use the **same** resamples (pairing), with
+  mean delta-F1, median, 95% CI, and P(delta>0).
+- No significance claim is made from point estimates alone.
 
-## Regras científicas aplicadas
+## Scientific controls
 
-- Corpus e gold intocados; mesmo conjunto e ordem de sentenças para todos.
-- Prompt do Gemma 4 fixado antes de qualquer resultado (SHA-256 no manifesto),
-  zero-shot, sem exemplos do BIA, temperatura 0, seed 42, no máximo 1 reparo
-  por sentença restrito à conversão de formato da resposta original.
-- Digest de `gemma4:latest` resolvido antes da execução e verificado
-  (`fail_on_digest_change: true`); resultados de digests diferentes não se misturam.
-- Falhas por sentença são registradas (`errors/`) e contabilizadas — nunca
-  convertidas em lista vazia; lista vazia só vale quando retornada explicitamente.
-- Sistemas externos: somente implementação/artefatos oficiais, commits e hashes
-  registrados; nenhuma regra ou peso alterado (ver `patches/`).
-- Saída bruta integral preservada em `outputs/benchmark/raw/`.
+- Corpus and gold untouched; same sentences, same order, for every system.
+- The Gemma 4 prompt was fixed before any result was observed (SHA-256 in the
+  manifest), zero-shot, no BIA examples, temperature 0, seed 42, at most one
+  repair per sentence restricted to format conversion of the original answer.
+- The `gemma4:latest` digest is resolved before execution and enforced
+  (`fail_on_digest_change: true`); results from different digests never mix.
+- Per-sentence failures are recorded (`errors/`) and counted — never silently
+  converted into empty lists; an empty list only counts when explicitly
+  returned by the system.
+- External systems: official implementations/artifacts only, with commits and
+  hashes recorded; no rules or weights were modified (see `patches/`).
+- Full raw outputs preserved under `outputs/benchmark/raw/`.
 
-### Ajustes técnicos registrados (smoke test)
+### Technical adjustments recorded during the smoke test
 
-Dois ajustes de **formato/capacidade** foram feitos após o smoke test de 5
-sentenças, antes da execução completa, sem tocar no prompt e sem consultar o gold:
+Two **format/capacity** adjustments were made after the 5-sentence smoke test,
+before the full run, without touching the prompt and without consulting the
+gold:
 
-1. O template do `gemma4` no Ollama 0.20 devolve o JSON dentro de cerca
-   markdown mesmo com `format` (JSON Schema); o parser remove a cerca
-   sintaticamente (conteúdo interno intacto; resposta bruta preservada).
-2. `num_predict` 384→1024: sentenças longas do BIA truncavam a resposta
-   (`done_reason=length`), invalidando o JSON.
+1. The `gemma4` template in Ollama 0.20 returns the JSON wrapped in a markdown
+   fence even when `format` (JSON Schema) is set; the parser strips the fence
+   syntactically (inner content untouched; raw response preserved).
+2. `num_predict` 384 -> 1024: long BIA sentences truncated the response
+   (`done_reason=length`), invalidating the JSON.
 
-## Saídas
+## Outputs
 
-Ver árvore completa em `outputs/benchmark/`: manifesto (`manifest.json` com
-corpus SHA-256, commits, digest, seeds, versões, ambiente), disponibilidade
-(`system_availability.json`), predições (`raw/`, `normalized/`, `errors/`),
-matching por protocolo (`matches/`), métricas (`metrics/`), bootstrap
-(`bootstrap/`), execução (`runtime/`) e relatórios (`reports/`, incluindo
-`benchmark_results.tex`).
+See the full tree under `outputs/benchmark/`: manifest (`manifest.json` with
+corpus SHA-256, commits, model digest, seeds, versions, environment),
+availability (`system_availability.json`), predictions (`raw/`, `normalized/`,
+`errors/`), per-protocol matching (`matches/`), metrics (`metrics/`),
+bootstrap (`bootstrap/`), runtime (`runtime/`), and reports (`reports/`,
+including `benchmark_results.tex`).
