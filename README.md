@@ -81,6 +81,15 @@ python -c "import stanza; stanza.download('pt')"
 
 The first attention-enabled execution also downloads the BERTimbau checkpoint from Hugging Face unless it is already cached.
 
+## Comparative benchmark
+
+The repository also ships a controlled comparative benchmark (PT-OIE-EXTRACTOR,
+pure-UD baseline, DptOIE, Multi²OIE zero-shot, and Gemma 4 via Ollama, all on
+the same 262 BIA sentences, scored under four matching protocols with
+sentence-level paired bootstrap). See [BENCHMARK.md](BENCHMARK.md) for the
+full protocol and reproduction commands; results and evidence live under
+`outputs/benchmark/`.
+
 ## Run one experiment
 
 From the repository root:

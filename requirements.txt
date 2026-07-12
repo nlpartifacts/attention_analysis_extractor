@@ -1,4 +1,4 @@
-# Versoes validadas na env Conda `mestrado` (Python 3.12.8).
+# Versoes validadas na um virtualenv Python (Python 3.12.8).
 
 # Extracao OpenIE e processamento de dados
 conllu==6.0.0

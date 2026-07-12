@@ -1,0 +1,17 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lccccccccc}
+\toprule
+System & P\textsubscript{legacy} & R\textsubscript{legacy} & F\textsubscript{1,legacy} & 95\% CI (F\textsubscript{1}) & F\textsubscript{1,strict} & F\textsubscript{1,tol} & F\textsubscript{1,CaRB} & Median s/sent & Fail\% & Supervised \\
+\midrule
+PT-OIE-EXTRACTOR (UD+attention) & 49.26 & 62.06 & \textbf{54.92} & [51.00, 58.75] & 18.37 & 29.14 & 61.67 & 0.16 & 0.0 & no \\
+UD baseline (RQ1) & 44.96 & 63.70 & 52.71 & [49.03, 56.34] & 17.48 & 30.78 & 59.19 & 0.18 & 0.0 & no \\
+Gemma 4 (Ollama, zero-shot) & 34.19 & 59.02 & 43.30 & [40.13, 46.59] & 22.34 & 28.87 & 47.94 & 4.71 & 0.4 & no \\
+Multi\textsuperscript{2}OIE & 28.12 & 44.26 & 34.39 & [31.13, 37.85] & 0.91 & 15.47 & 49.32 & 0.10 & 0.0 & yes \\
+DptOIE & 7.56 & 42.15 & 12.82 & [10.78, 15.04] & 4.24 & 7.35 & 15.75 & 0.25 & 0.4 & no \\
+\bottomrule
+\end{tabular}
+\caption{Comparative benchmark on the BIA corpus (262 sentences, 427 gold triples). P/R/F$_1$ under the \texttt{bia\_legacy} protocol (the project's legacy matcher, formerly ``Official''); protocols are not mutually comparable. Gemma~4 executed locally via Ollama, zero-shot, model tag \texttt{gemma4:latest}, digest \texttt{c6eb396dbd59}. \texttt{portnoie} unavailable: official code exists (FORMAS/dptoie-neural) with a trained model, but its official environment (Python$<$3.10, allennlp 2.7.0, unpinned git dependencies) is not deterministically reconstructible; building an approximate substitute is not allowed (not scored; unavailability is not zero).}
+\label{tab:benchmark}
+\end{table*}
